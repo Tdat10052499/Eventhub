@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import api from './services/api';
 import './App.css';
 
 // Components
@@ -18,7 +19,7 @@ function AuthWrapper({ children }) {
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    const getToken = async () => {
+    const initializeUser = async () => {
       if (isAuthenticated) {
         try {
           console.log('Getting access token...');
@@ -27,12 +28,18 @@ function AuthWrapper({ children }) {
           console.log('Token length:', token?.length);
           localStorage.setItem('access_token', token);
           console.log('Token saved to localStorage');
+          
+          // Sync user with backend database
+          console.log('Syncing user with backend...');
+          const response = await api.get('/auth/me');
+          console.log('User synced:', response.data);
+          localStorage.setItem('user', JSON.stringify(response.data));
         } catch (error) {
-          console.error('Error getting access token:', error);
+          console.error('Error initializing user:', error);
         }
       }
     };
-    getToken();
+    initializeUser();
   }, [isAuthenticated, getAccessTokenSilently]);
 
   if (isLoading) {

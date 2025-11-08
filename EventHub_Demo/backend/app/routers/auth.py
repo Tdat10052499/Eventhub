@@ -21,12 +21,13 @@ async def get_my_profile(
     db: Session = Depends(get_db)
 ):
     """Get current user profile"""
-    # Get or create user in database
+    # Get or create user in database with role from token
     db_user = crud_users.get_or_create_user(
         db,
         auth0_id=current_user.sub,
         email=current_user.email,
-        name=current_user.name
+        name=current_user.name,
+        role=current_user.role
     )
     return db_user
 

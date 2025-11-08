@@ -17,10 +17,11 @@ security = HTTPBearer()
 
 class Auth0User:
     """Authenticated user from Auth0"""
-    def __init__(self, sub: str, email: str, name: str, permissions: list = None):
+    def __init__(self, sub: str, email: str, name: str, role: str = "user", permissions: list = None):
         self.sub = sub  # Auth0 ID
         self.email = email
         self.name = name
+        self.role = role
         self.permissions = permissions or []
 
 
@@ -87,21 +88,41 @@ async def get_current_user(token_payload: dict = Depends(verify_token)) -> Auth0
         print("=" * 80)
         
         sub = token_payload.get("sub")
-        email = token_payload.get("email") or token_payload.get("https://eventhub.com/email")
-        name = token_payload.get("name") or token_payload.get("https://eventhub.com/name")
+        
+        # Try multiple ways to get email and name
+        email = (
+            token_payload.get("email") or 
+            token_payload.get("https://eventhub.com/email") or
+            token_payload.get("https://eventhub-api/email")
+        )
+        
+        name = (
+            token_payload.get("name") or 
+            token_payload.get("https://eventhub.com/name") or
+            token_payload.get("https://eventhub-api/name") or
+            token_payload.get("nickname") or
+            email  # Fallback to email if no name
+        )
+        
+        # If still no email/name, fetch from Auth0 userinfo endpoint
+        if not email or not name:
+            print(f"Email or name missing, will use sub as identifier")
+            # Use sub as fallback
+            email = email or f"{sub.replace('|', '_')}@auth0.user"
+            name = name or sub.split('|')[1] if '|' in sub else sub
+        
         permissions = token_payload.get("permissions", [])
         
+        print(f"Extracted - sub: {sub}, email: {email}, name: {name}")
         print(f"Initial permissions: {permissions}")
         
         # Get role from custom claim
-        role = token_payload.get("https://eventhub-api/role")
+        role = token_payload.get("https://eventhub-api/role") or "user"
         print(f"Role from custom claim 'https://eventhub-api/role': {role}")
         
-        if role:
+        if role and role not in permissions:
             permissions.append(role)
             print(f"Added role to permissions: {permissions}")
-        else:
-            print("No role found in custom claim!")
         
         if not sub:
             raise HTTPException(
@@ -109,10 +130,10 @@ async def get_current_user(token_payload: dict = Depends(verify_token)) -> Auth0
                 detail="Invalid token: missing subject"
             )
         
-        print(f"Final user permissions: {permissions}")
+        print(f"Final user role: {role}, permissions: {permissions}")
         print("=" * 80)
         
-        return Auth0User(sub=sub, email=email, name=name, permissions=permissions)
+        return Auth0User(sub=sub, email=email, name=name, role=role, permissions=permissions)
         
     except Exception as e:
         raise HTTPException(

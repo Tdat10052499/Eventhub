@@ -77,10 +77,15 @@ def delete_user(db: Session, user_id: int) -> bool:
     return True
 
 
-def get_or_create_user(db: Session, auth0_id: str, email: str, name: str) -> User:
+def get_or_create_user(db: Session, auth0_id: str, email: str, name: str, role: str = "user") -> User:
     """Get existing user or create new one"""
     user = get_user_by_auth0_id(db, auth0_id)
     if user:
+        # Update role if different
+        if user.role != role:
+            user.role = UserRole(role)
+            db.commit()
+            db.refresh(user)
         return user
     
     # Create new user
@@ -88,7 +93,7 @@ def get_or_create_user(db: Session, auth0_id: str, email: str, name: str) -> Use
         auth0_id=auth0_id,
         email=email,
         name=name,
-        role="user"
+        role=role
     )
     return create_user(db, user_create)
 

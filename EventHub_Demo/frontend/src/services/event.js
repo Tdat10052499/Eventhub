@@ -25,7 +25,7 @@ export const eventService = {
    * Get event by ID
    */
   getById: async (id) => {
-    const response = await api.get(`/events/${id}/`);
+    const response = await api.get(`/events/${id}`);
     return response.data;
   },
 
@@ -33,7 +33,7 @@ export const eventService = {
    * Get events by teambuilding
    */
   getByTeambuilding: async (teambuildingId) => {
-    const response = await api.get(`/events/teambuilding/${teambuildingId}/`);
+    const response = await api.get(`/events/teambuilding/${teambuildingId}`);
     return response.data;
   },
 
@@ -57,7 +57,7 @@ export const eventService = {
    * Update event
    */
   update: async (id, data) => {
-    const response = await api.put(`/events/${id}/`, data);
+    const response = await api.put(`/events/${id}`, data);
     return response.data;
   },
 
@@ -65,7 +65,7 @@ export const eventService = {
    * Delete event
    */
   delete: async (id) => {
-    await api.delete(`/events/${id}/`);
+    await api.delete(`/events/${id}`);
   }
 };
 

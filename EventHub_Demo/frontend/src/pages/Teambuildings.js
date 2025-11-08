@@ -10,8 +10,11 @@ function Teambuildings() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    start_date: '',
+    end_date: '',
     location: '',
-    is_active: true,
+    budget: '',
+    status: 'active',
   });
 
   useEffect(() => {
@@ -42,7 +45,7 @@ function Teambuildings() {
       }
       setShowForm(false);
       setEditingId(null);
-      setFormData({ name: '', description: '', location: '', is_active: true });
+      setFormData({ name: '', description: '', start_date: '', end_date: '', location: '', budget: '', status: 'active' });
       loadTeambuildings();
     } catch (err) {
       setError('Failed to save teambuilding');
@@ -55,8 +58,11 @@ function Teambuildings() {
     setFormData({
       name: teambuilding.name,
       description: teambuilding.description || '',
+      start_date: teambuilding.start_date || '',
+      end_date: teambuilding.end_date || '',
       location: teambuilding.location || '',
-      is_active: teambuilding.is_active,
+      budget: teambuilding.budget || '',
+      status: teambuilding.status || 'active',
     });
     setShowForm(true);
   };
@@ -76,7 +82,7 @@ function Teambuildings() {
   const handleCancel = () => {
     setShowForm(false);
     setEditingId(null);
-    setFormData({ name: '', description: '', location: '', is_active: true });
+    setFormData({ name: '', description: '', start_date: '', end_date: '', location: '', budget: '', status: 'active' });
   };
 
   if (loading) {
@@ -124,6 +130,26 @@ function Teambuildings() {
             </div>
 
             <div className="form-group">
+              <label>Start Date *</label>
+              <input
+                type="date"
+                value={formData.start_date}
+                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>End Date *</label>
+              <input
+                type="date"
+                value={formData.end_date}
+                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="form-group">
               <label>Location</label>
               <input
                 type="text"
@@ -133,15 +159,24 @@ function Teambuildings() {
             </div>
 
             <div className="form-group">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={formData.is_active}
-                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  style={{ width: 'auto', marginRight: '10px' }}
-                />
-                Active
-              </label>
+              <label>Budget</label>
+              <input
+                type="number"
+                step="0.01"
+                value={formData.budget}
+                onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Status</label>
+              <select
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
@@ -176,8 +211,8 @@ function Teambuildings() {
                 <td>{tb.description || '-'}</td>
                 <td>{tb.location || '-'}</td>
                 <td>
-                  <span className={`badge ${tb.is_active ? 'badge-active' : 'badge-cancelled'}`}>
-                    {tb.is_active ? 'Active' : 'Inactive'}
+                  <span className={`badge ${tb.status === 'active' ? 'badge-active' : 'badge-cancelled'}`}>
+                    {tb.status === 'active' ? 'Active' : 'Inactive'}
                   </span>
                 </td>
                 <td>{tb.total_events || 0}</td>

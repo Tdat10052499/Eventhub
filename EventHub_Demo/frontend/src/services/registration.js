@@ -25,7 +25,7 @@ export const registrationService = {
    * Get registrations for an event
    */
   getByEvent: async (eventId, params = {}) => {
-    const response = await api.get(`/registrations/event/${eventId}/`, { params });
+    const response = await api.get(`/registrations/event/${eventId}`, { params });
     return response.data;
   },
 
@@ -33,7 +33,7 @@ export const registrationService = {
    * Get registration by ID
    */
   getById: async (id) => {
-    const response = await api.get(`/registrations/${id}/`);
+    const response = await api.get(`/registrations/${id}`);
     return response.data;
   },
 
@@ -41,7 +41,7 @@ export const registrationService = {
    * Get registrations by status
    */
   getByStatus: async (status) => {
-    const response = await api.get(`/registrations/status/${status}/`);
+    const response = await api.get(`/registrations/status/${status}`);
     return response.data;
   },
 
@@ -49,7 +49,7 @@ export const registrationService = {
    * Update registration status
    */
   updateStatus: async (id, status) => {
-    const response = await api.put(`/registrations/${id}/status/`, { status });
+    const response = await api.put(`/registrations/${id}/status`, { status });
     return response.data;
   },
 
@@ -65,7 +65,7 @@ export const registrationService = {
    * Update registration (Admin only)
    */
   update: async (id, data) => {
-    const response = await api.put(`/registrations/${id}/`, data);
+    const response = await api.put(`/registrations/${id}`, data);
     return response.data;
   },
 
@@ -73,7 +73,7 @@ export const registrationService = {
    * Delete registration
    */
   delete: async (id) => {
-    await api.delete(`/registrations/${id}/`);
+    await api.delete(`/registrations/${id}`);
   }
 };
 

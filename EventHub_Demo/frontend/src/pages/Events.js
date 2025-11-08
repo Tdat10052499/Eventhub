@@ -17,6 +17,7 @@ function Events() {
     name: '',
     description: '',
     event_date: '',
+    location: '',
     max_participants: 50,
     image_url: '',
   });
@@ -83,6 +84,7 @@ function Events() {
         name: '',
         description: '',
         event_date: '',
+        location: '',
         max_participants: 50,
         image_url: '',
       });
@@ -95,11 +97,14 @@ function Events() {
 
   const handleEdit = (event) => {
     setEditingId(event.id);
+    // Format datetime for datetime-local input (YYYY-MM-DDThh:mm)
+    const eventDateTime = event.event_date.substring(0, 16);
     setFormData({
       teambuilding_id: event.teambuilding_id.toString(),
       name: event.name,
       description: event.description || '',
-      event_date: event.event_date.split('T')[0],
+      event_date: eventDateTime,
+      location: event.location || '',
       max_participants: event.max_participants,
       image_url: event.image_url || '',
     });
@@ -126,6 +131,7 @@ function Events() {
       name: '',
       description: '',
       event_date: '',
+      location: '',
       max_participants: 50,
       image_url: '',
     });
@@ -204,12 +210,21 @@ function Events() {
             </div>
 
             <div className="form-group">
-              <label>Event Date *</label>
+              <label>Event Date & Time *</label>
               <input
-                type="date"
+                type="datetime-local"
                 value={formData.event_date}
                 onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
                 required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                value={formData.location}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
               />
             </div>
 

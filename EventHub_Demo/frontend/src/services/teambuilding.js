@@ -25,7 +25,7 @@ export const teambuildingService = {
    * Get teambuilding by ID
    */
   getById: async (id) => {
-    const response = await api.get(`/teambuildings/${id}/`);
+    const response = await api.get(`/teambuildings/${id}`);
     return response.data;
   },
 
@@ -41,7 +41,7 @@ export const teambuildingService = {
    * Update teambuilding
    */
   update: async (id, data) => {
-    const response = await api.put(`/teambuildings/${id}/`, data);
+    const response = await api.put(`/teambuildings/${id}`, data);
     return response.data;
   },
 
@@ -49,7 +49,7 @@ export const teambuildingService = {
    * Delete teambuilding
    */
   delete: async (id) => {
-    await api.delete(`/teambuildings/${id}/`);
+    await api.delete(`/teambuildings/${id}`);
   }
 };
 
